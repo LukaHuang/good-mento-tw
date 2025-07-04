@@ -1,0 +1,21 @@
+{
+  "name": "ai-to-png-converter",
+  "version": "1.0.0",
+  "description": "Convert Adobe Illustrator (.ai) files to PNG format",
+  "main": "index.js",
+  "bin": {
+    "ai2png": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js",
+    "test": "node test.js"
+  },
+  "keywords": ["ai", "png", "convert", "illustrator", "image"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.32.6",
+    "pdf2pic": "^3.0.0",
+    "commander": "^11.1.0"
+  }
+}

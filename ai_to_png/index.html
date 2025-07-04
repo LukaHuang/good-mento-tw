@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 轉 PNG 工具</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 AI 轉 PNG 工具</h1>
+            <p>將 Adobe Illustrator 檔案快速轉換為 PNG 格式</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>拖拽 AI 檔案到此處</h3>
+                        <p>或點擊選擇檔案</p>
+                        <input type="file" id="fileInput" accept=".ai,.eps,.svg" multiple hidden>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            選擇檔案
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>轉換設定</h3>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label for="density">解析度 (DPI):</label>
+                        <input type="number" id="density" value="300" min="72" max="600">
+                    </div>
+                    <div class="setting-item">
+                        <label for="quality">品質 (%):</label>
+                        <input type="number" id="quality" value="90" min="1" max="100">
+                    </div>
+                    <div class="setting-item">
+                        <label for="format">輸出格式:</label>
+                        <select id="format">
+                            <option value="png">PNG</option>
+                            <option value="jpg">JPG</option>
+                            <option value="svg">SVG</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="pageMode">頁面模式:</label>
+                        <select id="pageMode">
+                            <option value="all">轉換全部頁面</option>
+                            <option value="first">僅第一頁</option>
+                            <option value="custom">自訂頁面範圍</option>
+                        </select>
+                    </div>
+                    <div class="setting-item" id="pageRangeContainer" style="display: none;">
+                        <label for="pageRange">頁面範圍 (例如: 1-3,5):</label>
+                        <input type="text" id="pageRange" placeholder="1-3,5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="files-section" id="filesSection" style="display: none;">
+                <h3>選擇的檔案</h3>
+                <div class="files-list" id="filesList"></div>
+                <div class="action-buttons">
+                    <button class="convert-btn" id="convertBtn">🔄 開始轉換</button>
+                    <button class="clear-btn" id="clearBtn">🗑️ 清除全部</button>
+                </div>
+            </div>
+
+            <div class="progress-section" id="progressSection" style="display: none;">
+                <h3>轉換進度</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>轉換結果</h3>
+                <div class="results-list" id="resultsList"></div>
+                <button class="download-all-btn" id="downloadAllBtn">📥 下載全部</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="info-section">
+                <h3>使用說明</h3>
+                <ul>
+                    <li>支援 .ai、.eps、.svg 格式檔案</li>
+                    <li>可批量轉換多個檔案</li>
+                    <li>自訂解析度和品質設定</li>
+                    <li>支援拖拽上傳</li>
+                </ul>
+            </div>
+            <div class="note">
+                <p>💡 提示：此工具使用 PDF.js 技術處理 AI/EPS 檔案，支援大部分標準格式的 Illustrator 檔案</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
