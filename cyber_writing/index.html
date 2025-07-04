@@ -1801,7 +1801,10 @@ Johnson 的故事就是經典案例：單純的流量會讓你很有名，且身
         // 註冊 Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
+                // 使用相對路徑，這樣在子目錄部署時也能正常工作
+                navigator.serviceWorker.register('./sw.js', {
+                    scope: './'
+                })
                     .then(registration => {
                         console.log('SW registered: ', registration);
                     })

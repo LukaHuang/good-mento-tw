@@ -2,7 +2,7 @@
   "name": "Prompt Library - AI 寫作提詞庫",
   "short_name": "Prompt Library",
   "description": "AI 寫作提詞庫，包含各種寫作技巧與 AI 提示詞範本",
-  "start_url": "/",
+  "start_url": "/cyber_writing/",
   "display": "standalone",
   "theme_color": "#4F46E5",
   "background_color": "#667eea",
@@ -51,7 +51,7 @@
   ],
   "categories": ["productivity", "utilities"],
   "lang": "zh-TW",
-  "scope": "/",
+  "scope": "/cyber_writing/",
   "features": [
     "cross-platform",
     "offline-capable"

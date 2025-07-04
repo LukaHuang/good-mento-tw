@@ -1,10 +1,19 @@
 const CACHE_NAME = 'prompt-library-v1';
+
+// 獲取當前基礎路徑
+const getBasePath = () => {
+  const path = self.location.pathname;
+  return path.substring(0, path.lastIndexOf('/') + 1);
+};
+
+const basePath = getBasePath();
+
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  basePath,
+  basePath + 'index.html',
+  basePath + 'manifest.json',
+  basePath + 'icons/icon-192x192.png',
+  basePath + 'icons/icon-512x512.png'
 ];
 
 // 安裝事件
