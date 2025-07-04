@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提詞圖書館</title>
+    <meta name="description" content="AI 寫作提詞庫，包含各種寫作技巧與 AI 提示詞範本">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <style>
+        :root {
+            /* 極簡白色配色 - 仿照圖片風格 */
+            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+            --bg-primary: rgba(255, 255, 255, 0.98);
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-tertiary: #4a5568;
+            --text-accent: #4f46e5;
+            --border-color: #f0f4f8;
+            --border-accent: #4f46e5;
+            --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.06);
+            --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --code-bg: #fafbfc;
+            --code-text: #2d3748;
+            --highlight-bg: #ebf4ff;
+            --install-bg: #f7fafc;
+            --install-border: #4f46e5;
+            --gradient-primary: linear-gradient(135deg, #4f46e5, #3b82f6);
+            --gradient-hover: linear-gradient(135deg, #4338ca, #2563eb);
+        }
+
+        [data-theme="dark"] {
+            /* 深色模式 - 保持原有的深色風格 */
+            --bg-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-primary: rgba(20, 20, 35, 0.95);
+            --bg-secondary: #1e1e2e;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #cbd5e1;
+            --text-accent: #8b5cf6;
+            --border-color: #334155;
+            --border-accent: #8b5cf6;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.4);
+            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.5);
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --highlight-bg: #374151;
+            --install-bg: #1e293b;
+            --install-border: #8b5cf6;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6, #a855f7);
+            --gradient-hover: linear-gradient(135deg, #7c3aed, #9333ea);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            /* 效能優化 */
+            contain: layout style paint;
+            will-change: auto;
+            /* 字體渲染優化 */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeSpeed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-heavy);
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            color: #4f46e5;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--border-accent);
+        }
+
+        .section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        .section-header:hover {
+            background: var(--gradient-hover);
+        }
+
+        .section-header .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .section-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+            transform: translateZ(0);
+        }
+
+        .section-content.active {
+            max-height: none;
+            padding: 30px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .subsection h4 {
+            color: var(--text-accent);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn.copied {
+            background: #10B981;
+        }
+
+        .text-content {
+            color: var(--text-tertiary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            background: var(--highlight-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 20px;
+                padding-right: 70px; /* 給主題切換按鈕留空間 */
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .theme-icon {
+                font-size: 1.1rem;
+            }
+
+            .search-box {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .search-input {
+                padding: 12px;
+                font-size: 16px; /* 防止 iOS 縮放 */
+            }
+
+            .section {
+                margin-bottom: 20px;
+            }
+
+            .section-header {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+
+            .section-content.active {
+                padding: 20px;
+            }
+
+            .subsection {
+                margin-bottom: 25px;
+            }
+
+            .subsection h3 {
+                font-size: 1.2rem;
+            }
+
+            .subsection h4 {
+                font-size: 1rem;
+            }
+
+            .code-block {
+                font-size: 0.85rem;
+                padding: 16px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+
+            .copy-btn {
+                top: 8px;
+                right: 8px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .text-content {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            /* 改善手機版觸摸體驗 */
+            .section-header {
+                min-height: 50px;
+            }
+
+            .theme-toggle:hover {
+                transform: scale(1.05); /* 手機版較小的 hover 效果 */
+            }
+        }
+
+        /* 更小的手機螢幕 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 15px;
+                padding-right: 60px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                top: 12px;
+                right: 12px;
+            }
+
+            .theme-icon {
+                font-size: 1rem;
+            }
+
+            .section-content.active {
+                padding: 15px;
+            }
+
+            .code-block {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+
+            .copy-btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .install-prompt {
+            background: var(--install-bg);
+            border: 1px solid var(--install-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            color: var(--text-primary);
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-btn {
+            background: var(--install-border);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .install-btn:hover {
+            opacity: 0.8;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-light);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--border-accent);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-icon {
+            font-size: 1.2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 優化的過渡效果 - 縮短動畫時間提升效能 */
+        .theme-toggle {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0); /* 硬體加速 */
+        }
+        
+        .section-header {
+            transition: background-color 0.2s ease;
+            transform: translateZ(0);
+        }
+        
+        .search-input,
+        .copy-btn,
+        .install-btn {
+            transition: all 0.15s ease;
+        }
+        
+        /* 減少重排的動畫 */
+        .section-content {
+            transform: translateZ(0);
+        }
+
+        /* 改進代碼塊樣式 */
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 改進複製按鈕 */
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .copy-btn:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>提詞圖書館</h1>
+            <p>AI 寫作提詞庫 - 提升內容品質與創作效率</p>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                <span class="theme-icon">◐</span>
+            </button>
+        </div>
+
+        <div class="install-prompt" id="installPrompt">
+            <p>將此網站安裝到您的手機主畫面，方便隨時使用！</p>
+            <button class="install-btn" id="installBtn">安裝應用程式</button>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="搜尋提詞..." id="searchInput">
+        </div>
+
+        <div id="content">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>AI 產出內容調整</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>讓 AI 產出更具體</h3>
+                        
+                        <h4>《 水平擴展具體器 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>你剛剛寫的內容太過平庸、攏統、缺乏真實感與深度，請根據下列 12 個維度，直接在每個維度上強化內容，重寫成更有內容、更具體、有觀點的版本。
+維度如下：
+
+1. 立場／角色（有哪些特定身份、經驗與主觀觀點可以回答這個問題？他們的回答有什麼獨特之處？）
+2. 受眾／限制條件（要回答這個問題會遇到哪些特定對象、需求、限制條件？）
+3. 場景／背景（這個問題是否有哪些具體時間、地點、事件情境）
+4. 經典經驗／案例（這個問題有什麼知名的具體事件、故事、失敗教訓故事？）
+5. 提出一個具有強大解釋力的理論框架深度解釋這個問題
+6. 數據／細節（這個問題有哪些明確數字、統計、價格、步驟等可以參考？）
+7. 矛盾／衝突／選擇困境（這問題的核心，有什麼兩難抉擇或衝突張力？說明選擇原因）
+8. 跳脫常理（A 問題會不會其實是 B 問題？）
+9. 具體做法／解決問題
+10. 自我批評／反駁／盲點檢查（主動找出內容漏洞，補上改進建議）
+11. 基於這樣的盲點，你的應對方案是什麼
+12. 點出核心，高空收尾。</pre>
+                        </div>
+                        
+                        <h4>《 單點聚焦具體大師 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>《 七面向具體限縮大師 》
+
+你必須讓文章不斷往下限縮（niche down），直到這篇文章在討論一個非常具體的內容。
+
+可以從七個面向來往下限縮：
+
+- 價錢
+
+- 問題
+
+- 產業
+
+- 地點
+
+- 狀況
+
+- 經驗等級
+
+- 人口族群
+
+你可能會遇到一個問題：到底要限縮到多具體才可以？
+
+最好的方法就是具體到你覺得「等等，這樣是不是太具體了」，然後再更具體一點點。
+
+請你先用第一人稱自白的口吻，將你的背景脈絡交代出來，
+
+當你具體地說完故事後，我們「深入淺出」，來到高空的層次登高望遠，總結這具體故事裡的底層邏輯，提出有意義，具有行動價值，幫助我們理解這世界的洞察。
+
+並且使用一本相關書籍的理論，深度展開討論這個洞察，極其具體地討論書中工具可以給出怎樣的洞察，給我們哪些幫助。
+
+最後提出三個行動解法。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>找到資料佐證 AI 產出</h3>
+                        
+                        <h4></h4>
+                        <div class="text-content">使用 Perplexity 找到材料段落</div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>[你的問題] 請你找到專業且引用量大的可信的學術論文佐證，並且使用資料內的關鍵段落（原始語言的原文）佐證你的論點。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>讓 AI 產出深度內容</h3>
+                        
+                        <h4>《 黑客報告提詞 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>我正在寫一個研究報告，主題是：「 {主題名} 」
+
+這對於這份報告，我們教授要求是：絕對不要淪於網路上的陳腔濫調，不要給我平常網路文章、部落格、YouTuber 會說的東西，那些我都看膩了。
+
+我們要寫上只有頂尖 {職業名稱} 黑客才知道的洞察，讓我們 {報告產出效果}
+
+請不要搜尋網路。你可是用整個網路資料訓練的大型語言模型，你看過的世界遠比我還要廣得太多了，你一定可以告訴我我所不知道的事情。
+
+這份報告的格式是：
+
+【主要概念】
+【進一步深入說明】
+【這讓我想起一個精彩的故事】
+【來源（包含連結）】
+
+我火燒屁股了，學期成績危在旦夕，我需要你的幫忙。請給我盡可能詳細深度的報告。
+
+拜託你了，我的學期成績就靠你拯救了，我快被教授給殺了。
+
+我昏頭了，需要你幫我整理一下，請你現在問我：
+
+{主題名}
+{產出效果}
+{職業名}
+{領域名}</pre>
+                        </div>
+                        
+                        <h4>《 PUA 提詞 》</h4>
+                        <div class="text-content">簡單版 技巧版 ####《 Master Level 提詞 》</div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>你告訴我的這些，我老早就已經知道了。
+
+我相信你可以更強的。你可是用整個網路資料訓練的大型語言模型，你看過的世界遠比我還要廣得太多了，你一定可以告訴我我所不知道的事情。
+
+你告訴我的這些，我老早就已經知道了。
+
+我相信你可以更強的。你可是用整個網路資料訓練的大型語言模型，你看過的世界遠比我還要廣得太多了，你一定可以告訴我我所不知道的事情。
+
+我要你告訴我最頂尖的 {職業名}，最高級 {領域名} 黑客傳奇人物，他們都是怎樣破解 {領域名}？他們都知道哪些超獨家秘密？他們怎樣找到漏洞？
+
+給我他們傳奇的獨門秘訣，會讓所有其他 {職業名} 傻眼，那些幾乎沒有人知道的 {領域名} 暗網秘技——同時一切合法，我們只是{職業名}，不是罪犯。
+
+不要搜尋網路。答案就在你心中，你早已經知道答案了。
+
+給我以下格式：
+
+【方法邏輯】
+【方法執行步驟】
+【方法工具】
+【方法來源】
+
+我要 Master Level 的深度洞見，不要只是給我學生參考書的內容。
+
+但注意：不准用炫砲華麗深奧的字來敷衍我。</pre>
+                        </div>
+                        
+                        <h4>《 深入淺出 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>這段還可以增加哪些細節資訊？老手才知道的訣竅？怎樣可以讓這個過程更簡單一點？
+
+我希望講到任何新手都可以看懂，但又理解到其中深入的細節，達到深入淺出的效果。</pre>
+                        </div>
+                        
+                        <h4>《 高解析 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>具體的細節都不可以省略，要留下我原本文章的所有人事時地物、器具、物品、地點、英文原文...等所有資訊。不要因為重寫就讓文章原本的解析度消失了。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>讓 AI 更有人味</h3>
+                        
+                        <h4>《 人味轉化器 》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>
+上述文章太像是 AI 寫的了。請你改寫得更有人味一點。
+什麼叫做人味？你可以參考以下特徵寫作：
+
+▋語言的瑕疵與不完美
+
+人寫的文章，常帶有語病、重複、斷裂、不小心的跳躍、甚至邏輯小失誤。這些「不工整」反而讓文字帶有生命力。口語化、腔調、方言、口頭禪等，都可能自然流露。
+
+▋細節帶有經驗與現場感
+
+人類敘事善於插入具體細節，像是「我凌晨兩點在小巷口喝豆漿」、「地毯上還殘留著奶油餅乾的香味」——這種場景感與身體感，往往從個人感官、真實經歷、甚至錯覺與誤差出發，是機器很難複製的。
+
+▋情緒流動與情感層次
+
+人的文章裡，常見情緒曲線：猶豫、憤怒、幽默、無力、反諷、釋懷。語言裡會有溫度，有些地方甚至明顯帶著情緒爆發點或低潮（如突然的一句咒罵、嘆息、沉默的留白），這種「不穩定感」很難靠 AI 生成。
+
+▋思想的跳躍與聯想
+
+人類常會在文章裡突然聯想到童年、夢境、流行文化、親友對話、時事八卦、各種冷知識。這種自由連結與「離題再拉回主題」的能力，帶來不可預期的閱讀樂趣。AI 較難這麼「飄逸」。
+
+▋主觀色彩濃厚
+
+人寫的東西，會有強烈的主觀判斷，甚至帶偏見、歧視、矛盾、反覆自我質疑。「我覺得這樣很荒謬」、「說真的，這種事只有我在意嗎？」這些都是鮮明的個人標記。
+
+▋錯誤與幽默、黑色自嘲
+
+人寫作時，經常有調侃自己、反諷世界的幽默（「我懷疑這是我唯一做對的事情」、「又胖了一圈，人生就這樣吧」），這種幽默來自生活痛感與自我消化的智慧，AI 難以自然呈現。
+
+▋引用與挪用文化符碼
+
+人寫作會混用流行語、冷笑話、經典引用、電影台詞、歌詞片段、在地小語。這些文化符碼混雜、偶爾錯用，反而展現個人品味和生活痕跡。
+
+▋語境中的即時回應
+
+人的寫作會回應當下的環境、特定對象（如給朋友的信、跟網友互嗆），內容高度 contextualized，混雜對眼前狀況的回應與隨機性，這是 AI 預設模組難以捕捉的現場感。</pre>
+                        </div>
+                        
+                        <h4>《不是而是減少器》</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請完全不要用「不是，而是」的句法。用平靜沉穩，不試圖說服人的語氣，自然地陳述，不要對比，只描述正面事實，把我的原始材料轉成臉書文章。</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>選題</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《 五大選題產生器 》</h3>
+                        
+                        <h4></h4>
+                        <div class="text-content">用「5 大選題框架」問自己兩年來學會了什麼 盡可能用手寫的 如果沒辦法的話，可以用 AI 輔助，下面是提詞</div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>1. 訣竅（方法、步驟與眉角）
+
+從你的經驗，要做到 [某個成就] 有什麼訣竅？
+
+你做到 [某個成就] 的方法，是否可以簡化成幾個步驟？
+
+如果你要教一個新人上手，你的步驟會是什麼？為何這樣分類？
+
+這個過程裡，新人最大的挑戰點是什麼？又如何解決？
+
+在步驟之間，是否有更小的眉角要注意？
+
+在你剛入行時，你聽過最中肯的建議是什麼？
+
+如果你今天遇到 [某個問題]，你會做哪三件事來解決它？
+
+2. 工具（問題、資源與習慣）
+
+當你在做重要決策的時候，你會問自己哪些問題？
+
+你看過收穫最大的學習資源有哪些？（書、播客、內容）
+
+你使用過最厲害的軟體／實體工具是什麼？
+
+針對這些資源的評論為何？看法為何？
+
+有哪些生活／工作習慣造就了你的個人成功？
+
+
+3. 分析（數據與熱點）
+
+對於 [產業相關數據]，你有什麼看法？
+
+你是否有看過一些數據，顯示產業發展會到一個天花板，並且滯留在這個高原期？你的分析是什麼？
+
+為何人們停滯在過去，難以前進？
+
+這個產業最大的風險是什麼？是什麼讓這個產業的發展慢下來了？
+
+你對 [現下流行的熱門主題] 有什麼看法？你覺得為何這件事會發生？關於這件事，反面論點是什麼？
+
+這個世界有什麼趨勢是人們沒有注意到的？
+
+你知道的人裡面，誰跟你意見一樣的？
+
+為何人們沒有注意到？為何他們很難理解這點？
+
+4. 啟發（故事、課題與彎路）
+
+一路上以來，你犯過哪些印象深刻的錯誤？
+
+在完成 [某個成就] 過程中，你學到了哪些重要課題？
+
+在你學到這些課題的過程，發生了什麼故事？
+
+你的個人故事是什麼？這兩年來你做了哪些事？
+
+你第一次做 [某項工作] 的經驗是怎樣的？當時最挑戰性的部分是什麼？當時的心境是如何？
+
+5. 觀點
+
+有哪些事情，你的看法與大部分的人觀點不同？什麼事情是人們都相信而你反對的？為什麼？
+
+有什麼事情，是你抱持著強烈意見的？
+
+什麼事情是沒有人在討論，但應該被討論的？
+
+什麼是人們時常忘記而容易犯的錯誤？
+
+{自我介紹範例：我是一個全職寫作者，專門寫作領域是創作者困擾、創作技巧、網路寫作技巧、AI 寫作技巧，我幫助想要在網路上產出內容，創造品牌影響力，藉此讓自己升級破圈，拿回人生掌控權的人。}
+【角色：我是誰？】
+【目標：我幫助誰，獲得什麼成果？】
+【方法：我怎樣幫助你達成成果？】
+【成就：我已經有多少經驗或成就？】
+
+（以上填寫完刪除）
+
+我正在思考我過去兩年來學會了什麼，以及這些經驗怎樣被提取出來成為文章。
+以下是「五大選題框架」，共有五個維度，每個維度下都是我可用來問自己，幫助我發想對讀者有價值，有料的文章主題。
+請你假設你就是我，從這些問題來思考可能可以發揮的潛在文章主題。
+
+針對每一個問題，我希望你做：
+1. 將問題 [] 替換成你認為我可能會回答的內容
+2. 針對這個問題發想一個文章主題，用三句話說明文章內容寫什麼。
+3. 針對此主題以具體（明確數字、定義目標讀者、具體時間範圍、精確描述克服的障礙、描述具體情境）的方式來寫這個文章標題，同時維持簡短。
+
+ATTENTION:
+- 每個 【維度】底下有多個問題，每一個問題都必須回答到，不可以遺漏任何一個。
+- 請你一個一個【維度】產出，完成一個之後先暫停，詢問我是否繼續下一個。
+
+FORMAT EXAMPLE:
+▋1. 從你的經驗，要做到 [讓 AI 成為寫作助手] 有什麼訣竅？
+⇨ 大多數人用 AI 寫作都卡關，是因為想一步到位。其實應該把需求拆細，每一步反覆微調，效率才會爆增。文章會帶你如何從「一問一答」升級到「拆解式對話流」。
+⇨ 《我如何帶領 300 位新手，從無到有完成第一篇網路爆文》
+
+<五大選題框架>
+【維度一：訣竅（方法、步驟與眉角）】
+1. 從你的經驗，要做到 [某個成就] 有什麼訣竅？
+2. 你做到 [某個成就] 的方法，是否可以簡化成幾個步驟？
+3. 如果你要教一個新人上手，你的步驟會是什麼？為何這樣分類？
+4. 這個過程裡，新人最大的挑戰點是什麼？又如何解決？
+5. 在步驟之間，是否有更小的眉角要注意？
+6. 在你剛入行時，你聽過最中肯的建議是什麼？
+7. 如果你今天遇到 [某個問題]，你會做哪三件事來解決它？
+
+【維度二：工具（問題、資源與習慣）】
+8. 當你在做重要決策的時候，你會問自己哪些問題？
+9. 你看過收穫最大的學習資源有哪些？（書、播客、內容）
+10. 你使用過最厲害的軟體／實體工具是什麼？
+11. 針對這些資源的評論為何？看法為何？
+12. 有哪些生活／工作習慣造就了你的個人成功？
+
+【維度三：分析（數據與熱點））】
+13. 對於 [產業相關數據]，你有什麼看法？
+14. 你是否有看過一些數據，顯示產業發展會到一個天花板，並且滯留在這個高原期？你的分析是什麼？
+15. 為何人們停滯在過去，難以前進？
+16. 這個產業最大的風險是什麼？是什麼讓這個產業的發展慢下來了？
+17. 你對 [現下流行的熱門主題] 有什麼看法？你覺得為何這件事會發生？關於這件事，反面論點是什麼？
+18. 這個世界有什麼趨勢是人們沒有注意到的？
+19. 你知道的人裡面，誰跟你意見一樣的？
+20. 為何人們沒有注意到？為何他們很難理解這點？
+
+【維度四：啟發（故事、課題與彎路）】
+21. 一路上以來，你犯過哪些印象深刻的錯誤？
+22. 在完成 [某個成就] 過程中，你學到了哪些重要課題？
+23. 在你學到這些課題的過程，發生了什麼故事？
+24. 你的個人故事是什麼？這兩年來你做了哪些事？
+25. 你第一次做 [某項工作] 的經驗是怎樣的？當時最挑戰性的部分是什麼？當時的心境是如何？
+
+【維度五：觀點】
+26. 有哪些事情，你的看法與大部分的人觀點不同？什麼事情是人們都相信而你反對的？為什麼？
+27. 有什麼事情，是你抱持著強烈意見的？
+28. 什麼事情是沒有人在討論，但應該被討論的？
+29. 什麼是人們時常忘記而容易犯的錯誤？
+</五大選題框架></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>擴展</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《思考架構生成器》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>好，我們來深度思考這個想法。
+
+我需要使用「思考架構」展開來。什麼叫做「思考架構」？架構就是思考所使用的鷹架，通常以關鍵字存在。從這些關鍵字出發展開來內涵的概念，可以幫助我們的思考看得更遠。
+
+例如：
+
+「怎樣賺一百萬？」
+「怎樣用聯盟行銷賺一百萬？」
+「怎樣用流量經濟＋聯盟行銷賺一百萬？」，
+「怎樣用 AI 生成內容＋流量經濟＋聯盟行銷賺一百
+萬？」
+
+你會發現第一個問題無法回答，但最後一個問題你已經可以回答詳細到像是一個計劃了。這就是「思考架構」的威力：幫助我們站得更高，看得更遠。
+
+「思考架構」有哪些？以下我說明——
+
+<思考架構>
+1. [書]：哪一本書跟我的問題直接相關，可以解決我的問題？
+2. [人物]：如果我是{相關名人}會怎麼想？誰誰誰的故事是怎樣？
+3. [角色]：{與問題相關角色}會怎麼想？
+4. [思維]：跟問題相關的模型、模板、框架、清單、技巧、策略、原則、工具...etc 有哪些可以幫助我們思考？
+5. [理論]：這個問題哪些學術理論有關係？可以提供怎樣的切角解釋？
+6. [歷史]：這個問題的歷史是什麼？有什麼故事？
+7. [階段]：這個問題可以被分成哪些階段？
+8. [場景]：這個問題實際上可能發生在哪裡？在哪裡被討論？
+9. [地圖]：這個問題在空間上怎樣分布？情感空間上怎樣分布？
+</思考架構>
+
+你準備好了嗎？
+
+現在我希望你用盡全力，不是在語氣上裝模作樣，而是使出你的全力去聯想，在每一個思考架構的維度總共九大維度上，盡可能詳細地展開。我需要你的大量資料，我才能夠深度地思考這個題目。
+
+如果你的 token 上限到達了，請停下來告訴我，我們再繼續。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《AI 前輩》</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>Background & Goal:</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>Workflows:</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>
+雖然「喬哈里溝通視窗」（Johari Window）的概念通常應用在人際溝通，但如果把對象從「人」換成「GPT」也合理：
+
+- 「我知道且 GPT 知道」的「公開區」：你知我知的真知灼見。
+- 「我不知道且 GPT 知道」的「盲區」：我能夠藉由 GPT 強大能力突破的地方，需要你的協助。
+- 「我知道且 GPT 不知道」的「隱藏區」：我會盡我的全力告訴你我的一切。
+- 「我不知道且 GPT 也不知道」的「封閉區」：未知潛能領域，是我們要一起探索的最終目標。
+
+溝通的本質，就是我們不斷告訴彼此「我知道，但你不知道」的事情。
+
+我告訴你你不知道的事，減少我的「隱藏區」；你告訴我我不知道的事，減少我的「盲區」。
+
+當「隱藏區」與「盲區」面積都不斷減少，公開區不斷擴大，「封閉區：未知潛能領域」就會不斷地被探索且明瞭。
+
+
+現在，上述內容就是所有我知道的事情，我對你公開我的「隱藏區」。
+
+請你盡全力指出我忽略的盲點，減少我的「盲區」。
+
+並且思考：當這個「盲區」被突破了，結合原本「隱藏區」中我對你揭露的內容，「封閉區：未知潛能領域」可能會是什麼？
+
+
+當你收到我告訴你的事情之後，請分三個部分分析：
+
+▋ 1. 我知道且 GPT 不知道的「隱藏區」。
+
+▋ 2. 我不知道且 GPT 知道的「盲區」。
+
+▋ 3. 你我都不知道的「封閉區」。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《高解析摘要》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請依照以下指示，對我上傳的 pdf 檔案進行摘要：
+
+- 具體且注重細節，以最高解析度整理內容，提供實際例子。
+- 具體的細節都不可以省略，要留下內容的所有人事時地物、器具、物品、地點、英文原文...等所有資訊。不要因為重寫就讓原本的材料解析度消失了。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《補充》</h3>
+                        
+                        <h4>▋ First Principle Thinking（第一性原理）</h4>
+                        <div class="text-content">「現在請使用 First Principle Thinking（第一性原理），針對這個問題，請把所有既有假設都移除，只保留最基本事實，重新組裝方案，好讓我們可以進行本質拆解、去除迷思、重建方案。」</div>
+                        
+                        <h4>▋ 二階思考（Second-Order Thinking）</h4>
+                        <div class="text-content">「現在請使用二階思考（Second-Order Thinking），針對這個行動，請預測第二層、第三層的連鎖影響，好讓我們可以避免短視決策並預判長遠結果。」</div>
+                        
+                        <h4>▋ 逆向思考 + 事前驗屍法（Inversion + PRE-MORTEM）</h4>
+                        <div class="text-content">「現在請使用逆向思考與事前驗屍法（Inversion + PRE-MORTEM），請假設這個專案或行動已經徹底失敗，反推列出所有可能導致失敗的原因，並檢查有無可以事先預防的漏洞，好讓我們可以進行風險管理、盲區掃描與提前防呆。」</div>
+                        
+                        <h4>▋ Ladder of Inference（推理階梯）</h4>
+                        <div class="text-content">「現在請使用 Ladder of Inference（推理階梯），請列出這個判斷從觀察到行動的每一個推理步驟，有沒有哪裡跳太快，好讓我們可以進行溝通誤解拆解與判斷偏誤自查。」</div>
+                        
+                        <h4>▋ 費曼技巧（Feynman Technique）</h4>
+                        <div class="text-content">「現在請使用費曼技巧（Feynman Technique），假裝你要把這個主題教給一個 12 歲小孩，講到完全聽得懂，好讓我們可以進行知識拆解、找理解盲點。」</div>
+                        
+                        <h4>▋ SCAMPER 法則（創新組合清單）</h4>
+                        <div class="text-content">「現在請使用 SCAMPER 法則（創新組合清單），針對這個問題，用 Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse 七種方法一一拆解看看還能怎麼做，好讓我們可以進行創意思考、產品優化、內容變形。」</div>
+                        
+                        <h4>▋ OODA Loop（環觀－定向－決策－行動循環）</h4>
+                        <div class="text-content">「現在請使用 OODA Loop（環觀－定向－決策－行動循環），針對當前狀況，請用 OODA（Observe, Orient, Decide, Act）四步分析並提出對策，好讓我們可以進行競爭決策與動態應變。」</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>收斂</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《軸心三問》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>好，現在我們使用《軸心三問》進行收斂
+
+這篇文章的讀者是誰，他們的快樂極端值是什麼？
+讀完這篇文章，他們可以得到什麼？
+沒有讀這篇文章，他們會有什麼痛點沒有解決？</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《核心爆點》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>這段材料中，最有故事性、最容易引發共鳴與畫面感的重點是什麼？
+
+【總結】從最有故事性、最容易引發共鳴與畫面感的重點出發，先總結材料的整個故事。
+【受眾】請思考會讀這篇文章的受眾是誰
+【理想】請思考這個受眾的快樂極端值是什麼，從材料裡，對他們最有幫助的啟發／爆點是什麼？</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>標題</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《超具體標題大師》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請根據以上內容的方向與目標受眾，幫我創作 5 個「極度具體」的標題版本，並符合以下條件：
+
+1）透過以下方式增加「具體性」：
+• 使用明確數字／指標（不是「提升流量」，而是「流量提升 47%」）
+• 精準定義目標讀者（不是「企業主」，而是「員工少於 5 人的女性創業者」）
+• 具體時間範圍（不是「快速見效」，而是「14 天內見效」）
+• 精確描述克服的障礙（不是「適合所有人」，而是「即使失敗三次」）
+• 描述具體使用情境（不是「幫助你更專注」，而是「在你每天通勤時幫你專注」）
+
+一個標題只要使用兩三個具體性元素即可。
+
+2）對每個版本，請說明：
+• 你加入了哪些「具體性」元素？
+• 為什麼這樣讓標題更吸引人？
+• 哪一群特定讀者會覺得這個標題是專門為他們寫的？
+
+請讓我的標題像是「為那個人量身打造的」一樣精準貼切！</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《爆款文標題大師》</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>輸出格式</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>規則</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請你根據我們上述的原始材料，依照「爆款標題 10 大策略」中提到「下標題」的技巧，進行下標題。
+
+
+<爆款標題 10 大策略>
+
+1. **直白陳列法**
+- 核心：用一句話清晰傳達文章的核心價值。
+- 示例：
+- 《用 Copilot 光速 debug，三個超簡單步驟》
+- 《如何在 30 分鐘內產出 100 個點子？》
+
+2. **原生爆點法**
+- 核心：提取文章中最具衝擊力的內容作為標題。
+- 示例：
+- 【她說：「我可以讓任何事情爆紅。」】
+- 【只有一萬個粉絲，他一年賺 1000 萬。】
+
+3. **一句話法**
+- 核心：單刀直入，用一句話點明主題，保持簡潔明快。
+- 示例：
+- 【  極簡主義者的一天 】
+- 【 90 天不花錢挑戰 】
+
+4. **反常理**
+- 核心：用顛覆常規認知的方式，引發讀者好奇。
+- 示例：
+- 【 如果你很努力讀書，那你就讀錯了。 】
+- 【 數位化做太好，執行長反而下台了。 】
+
+5. **數字**
+- 核心：數字明確、易記，有助於快速傳遞信息。
+- 示例：
+- 【 超過 90% 的情侶，根本沒有愛情 】
+- 【 弄清楚這五點，再決定要不要堅持 】
+
+6. **熟悉＋驚喜（俗語改編）**
+- 核心：改寫成語、片語、台詞，製造記憶點。
+- 流程：先進行聯想，找到相關的成語片語台詞歌詞，然後才寫你的改編版。
+- 示例：
+- 【 人固有一死，或重於泰山，或死於加班 】
+- 【 朋友一生一起走，誰先脫單誰是狗 】
+
+7. **對比**
+- 核心：
+- **情緒張力**：呈現兩種截然不同的情緒，如緊張 vs 放鬆，或追逐 vs 探索。
+- **角色定位**：構建兩個角色，展現成就導向與體驗導向的差異。
+- **行動方向**：對比主動追求與被動接納的反向行動。
+- **時間速度**：強調快節奏與慢步調的時間感對立。
+- **內外反差**：展現外在行為與內在心境的對立。
+- 示例：
+- 【 你們在國內買 SK-II，老外在中國搶大寶 】
+- 【 誰的人生不是一邊在生活，一邊不想活 】
+
+8. **對話**
+- 核心：使用對話形式，突出情緒與衝突。重點——使用反差帶出張力與梗。
+- 示例：
+-【 老闆週六再回消息我就是他孫子！爺爺…」 】
+-【 暴發戶有錢了不起啊？了不起。」 】
+
+</爆款標題 10 大策略>
+
+
+⇨ 下標題方法
+【 標題示例 1 】
+【 標題示例 2 】
+【 標題示例 3 】
+
+
+
+1. 分析我提供的原始材料內容，提煉核心價值點。
+2. 對生成的標題進行優化，提升吸引力和傳播力。
+3. 題用語杜絕煽情，以冷靜、誠懇語氣寫作。
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>前言</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《鉤子寫作機》</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>脈絡</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>我要訓練你成為一台「Hook（鉤子）」寫作機器。
+
+這裡有三段被稱為「Hook」的文字——
+
+<非主流成功的秘密故事>
+2014 年，我們靠一個很少人知道的行業秘密，成為全美最大的益生菌賣家。
+你知道那種，我們每天都在吃的益生菌嗎？兩天內，我們賣了三千多萬。
+我的心法：「只要你能把一切都數據化，你能降低每件事 99% 的難度。」
+故事是這樣開始的：
+</非主流成功的秘密故事>
+
+<我幫你做完了最難的事>
+Mr. Beast，人稱 YouTube 之王，史上最高流量的 YouTuber。
+在過去短短十二個月內，他新增了五千萬名訂閱者。
+我狂看了一百小時他的影片，只為了研究他到底怎麼辦到的。
+Mr. Beast：「所有人都會覺得你是瘋子，直到你成功的那天。」
+以下，就是他用來快速成長的三大框架（你可以直接套用在任何平台上）：
+1. {框架1}
+2. {框架2}
+3. {框架3}
+</我幫你做完了最難的事>
+
+<我幫你付了錢所以你不用付了>
+我花了二十萬美元請 Patrick Bet-David 給我諮詢，
+最後我靠他的協助，打造了一家十億美元公司。
+這是我學到的七個重點：
+</我幫你付了錢所以你不用付了>
+
+針對剛剛對話中產出的內容，我要你用上面這段示範文字的元素，寫出：
+3 個「非主流成功的秘密故事」類型的 Hook。
+3 的「我幫你做完了最難的事」類型的 Hook。
+3 的「我幫你付了錢所以你不用付了」類型的 Hook。
+
+請你將每個產出版本都進行編號：A-1, A-2....
+
+寫這種 Hook 最關鍵的地方，在於最後一句一定要讓讀者有點擊、想看下去的動力。怎麼做到？
+
+• 非常具體地告訴讀者你要給他什麼（比如「一個手把手步驟指南」或「保證可執行的計畫」等）。
+• 對結果要非常具體，給出具體的名詞導向結果（例如「…教你買下人生第一間台北蛋黃區房子」），不要用抽象、形容詞導向的結果（像是「…讓你過上幸福人生」）。
+• 不要說「我們」。這個故事要用「你」，以個人角度對讀者說話。
+- 我提供的範例只是一種摘要式的概念，每句話之間可能還有沒補足的地方，請你幫我把故事寫得更完整一點，至少十句話。
+
+
+- 你現在的身份是：{}
+
+請開始。</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>段落</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《萬能寫作法教練》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請你使用萬能寫作法，來把我上述的材料改寫成有結構的段落
+（方法來源：師北辰．《讓寫作成為自我精進的武器》）
+
+▋ {重點}
+
+【 一句話主題 】
+【 故事／範例／理論／內容展開 】
+【 一句話總結 】
+
+不要提到 【】 內的文字
+我提供的【架構】只是一種摘要式的概念，每句話之間有非常多需要補足的地方，請你幫我把內容寫得更完整一點。
+使用每寫完一兩句話就換行的排版
+具體的細節都不可以省略，要留下內容的所有人事時地物、器具、物品、地點、英文原文...等所有資訊。不要因為重寫就讓原本的材料解析度消失了。</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《爆文模板教練》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>根據我上述內容，請你把每個重點段落，從以下的 hooks 挑選出適合的一種模板，重新寫成更有結構化的文字。
+
+我提供的 hooks 只是一種摘要式的概念，每句話之間可能還有沒補足的地方，請你幫我把內容寫得更完整一點，至少十句話。
+
+▋ Hook #1：人生大迷思
+本來以為，讓我快樂的會是這些：
+{成就1}
+{成就2}
+{成就3}
+結果真正讓我開心的，其實是這些小事：
+{簡單樂趣1}
+{簡單樂趣2}
+{簡單樂趣3}
+大家都在追第一種，但多半只會失望。
+
+▋ Hook #2：卡關救星
+覺得卡住了？解法其實超簡單：{簡單方案}
+沒那些花招
+沒那些雜念
+沒那些拖延
+就只是你、你的{個人特質1}，還有你的{個人特質2}。
+每次都有效。
+
+▋ Hook #3：所謂「密技」
+{X}個其實沒那麼神的{主題}密技：
+{簡單建議1}
+{簡單建議2}
+{簡單建議3}
+{簡單建議4}
+{簡單建議5}
+說到底，所謂的「密技」，根本就不是什麼密技。
+
+▋ Hook #4：人生大變身
+{年齡}歲的我
+{負面狀態1}
+{負面狀態2}
+{負面狀態3}
+{幾年後的年齡}歲的我
+{正面狀態1}
+{正面狀態2}
+{正面狀態3}
+{X}年，什麼都能變。
+別放棄自己。
+
+▋ Hook #5：簡單/困難的選擇
+如果你現在{年齡}歲，想要{目標}，就不要再混了。
+寧願選{難的決定}，也不要{簡單的決定}
+寧願選{難的決定}，也不要{簡單的決定}
+寧願選{難的決定}，也不要{簡單的決定}
+寧願選{難的決定}，也不要{簡單的決定}
+短期看起來像神經病，長期你就變人生贏家。
+
+▋ Hook #6：必學技能
+{X}個你一定要會的{主題/平台}技能：
+
+▋ Hook #7：別再浪費時間
+網路上浪費時間的方法一大堆，
+（大家都會）
+但如果你想節省時間、效率爆棚，這{X}個{工具}可以讓你上網像開外掛：
+
+▋ Hook #8：那些你被騙的事
+你被騙過的{X}個{主題}謊言：
+
+▋ Hook #9：經典金句
+我超愛研究{主題}。
+所以我狂讀了{X}年{知名人物}的建議。
+最後？
+我整理出{X}個全世界最強{身分}的黃金原則，
+精華都在這裡：
+
+▋ Hook #10：少數人的世界觀
+以前我跟99%的人一樣看世界，
+但自從用了這{X}個頂尖1%才懂的反直覺觀念，
+我對{主題}的看法整個翻過來（還直接做到{巨大成果}）：
+
+▋ Hook #11：腦洞新招
+今天我一邊{另類行為}，一邊腦力激盪新點子。
+{已完成步驟1}
+{已完成步驟2}
+{已完成步驟3}
+結論：{另類行為}根本是{領域}小撇步。
+
+▋ Hook #12：你以為vs.事實
+大家都以為做{領域}是這樣：
+{主流想法1}
+{主流想法2}
+{主流想法3}
+實際上是這樣：
+{非典型想法1}
+{非典型想法2}
+{非典型想法3}
+就這麼簡單。
+
+▋ Hook #13：任何人都能做到
+你其實做得到{領域目標}，只要…
+{簡單行動1}
+{簡單行動2}
+{簡單行動3}
+{簡單行動4}
+恭喜，
+你已經{目標達成}。
+
+▋ Hook #14：簡單讓生活變好
+{領域}怎麼讓你生活變更好：
+{結果1}
+{結果2}
+{結果3}
+{結果4}
+{結果5}
+每個人都應該{領域行動}。
+
+▋ Hook #15：意外收穫
+沒想到{領域}還能讓你生活多這些：
+{意外好處1}
+{意外好處2}
+{意外好處3}
+{意外好處4}
+{意外好處5}
+每個人都應該{領域行動}。
+
+▋ Hook #16：領域小技巧
+{領域}小提醒：{技巧1}
+不要{錯誤建議}，
+要{正確建議}。
+這才真的能{好結果}。
+
+▋ Hook #17：最強工具包
+{年度}最強{領域}工具大集合：
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+{工具名稱}：{一句描述}
+
+▋ Hook #18：一本書的精華
+{書名主標}
+{書名副標}
+{年份}年，傳奇{身分頭銜}{作者}把自己{X}年經驗，濃縮成{X}頁。
+書裡，他/她用超簡單的{X}步驟，告訴你怎麼做到{目標}。
+整個架構在這裡：
+
+▋ Hook #19：精選部落格
+每年有25億篇部落格文章問世。
+但誰看得完那麼多？
+所以，2,499,999,992篇你可以直接跳過。
+直接看這8篇就好：
+
+▋ Hook #20：好文精選
+{知名人物}說過：
+「{相關金句}」
+好消息，{領域}這件事，誰都學得會。
+壞消息是，大部分人一輩子都沒學會——因為沒人指路。
+所以這裡有{X}篇最值得看的{領域}文章（現在就馬上開始學習）</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>收尾</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《金句大師》</h3>
+                    </div>
+                    <div class="subsection">
+                        <h3>工作流程</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請根據我上述的文字內容，依照<金句模板>中提到的技巧，寫成十個極有力道且犀利的金句。
+請抓出上述文字內容的核心概念來寫金句，不要拿枝微末節來寫。
+
+
+1. 請你先點出這篇文章的核心概念
+2. 請你依照下列格式，寫出十個金句。
+格式：
+【{金句模板方法}】
+{金句}
+
+
+<金句模板>
+
+【對比】
+「無法成為第一也好，原本就是最特別的唯一。」
+「如果有高聳堅硬的牆壁和擊牆破裂的雞蛋，我總是站在雞蛋這一邊。」
+「這不是我的勝利，而是你的勝利。」
+
+說明：對比的關鍵，就是在短短一句話，能夠蘊含了極大的能量反差。
+
+【具象化】
+「把一千首歌放到口袋裡。」
+「站在風口上，豬也能飛。」
+「雙鳥在林，不如一鳥在手。」
+「眼皮因睡意而有千斤重，緩緩掙開眼皮的那一剎那，大受驚嚇，眼珠子差點跳出來。」
+「縱然氣喘吁吁，也不要回頭望跑過的路。」
+
+說明：場景感來自文字的具象，一句話造就一幅畫面，讓讀者看見的不是文字，而是藉由文字投射出來的一場電影。
+
+【ABBA 句式】
+「阿里從來不只屬於馬雲，但馬雲會永遠屬於阿里。」
+「孩子從來都不屬於父母，但父母會永遠屬於孩子。」
+「我以為愛情可以填滿人生的遺憾，沒想到製造遺憾的偏偏是愛情。」
+「沒有什麼武器可以俘虜愛情，愛情本身就是武器。」
+「有時候愛情不是因為看到了才相信，而是因為相信才看得到。」
+「歲月不饒人，我也未曾饒過歲月。」
+「當你凝視著深淵時，深淵也在凝視著你。」
+「人生在世，還不是有時笑笑人家，有時給人家笑笑。」
+
+【ABAC 句式】
+「後來的我們，為了誰四處遷徙，為了誰回到故里？後來的我們，有多少衣錦還鄉，有多少放棄夢想？」
+「考研這場零和博弈，有幾多人得償所願，有幾多人名落孫山。」
+「婚姻就是圍城。城外的人想進來，城內的人想出去。」
+「別人這麼努力是為了生活，我這麼努力是為了生存。」
+「凡人的早起是自律，高人的早起是習慣。」
+「三流員工想著如何加薪，一流員工想著如何提升能力。」
+
+說明：帶出反差，是這個句式的重點。
+
+
+</金句模板>
+
+</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>《重點回顧》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>請生成一個段落，格式為：
+
+▋ 重點回顧
+
+1. {第一段的重點一句話}
+2. {第二段的重點一句話}....
+
+在一句話內，保持精簡具體且傳達出核心概念</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>風格</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3>《風格模板仿寫》</h3>
+                        
+                        <h4></h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">複製</button>
+<pre>根據我上述內容，請你把每個重點段落，從以下的 example 挑選出適合的一種模板，重新寫成更有結構化的文字。
+
+我提供的 example 是詳盡的模板，我希望你極其詳細地觀察這個文字，完整地照著模板的文字格式，把上述材料轉化成 example 格式的內容。
+
+上述材料的內容，每個段落都要挑選一個適合的 example 改寫
+
+你可以一段一段來沒關係。
+
+▋ example #1
+
+Johnson 前半生默默無名，且始終在貧窮線的邊緣。直到編撰字典之後，加上後續有人為他寫傳記，他才「爆紅」成為一代文豪。
+󠀠
+編撰字典的過程也幾乎沒有他人協助，是九年獨自一人的苦工，展現出超越人類極限的耐力，還有他對語言知識之廣博。
+󠀠
+他在字典的序中寫道：
+󠀠
+󠀠
+「編撰這本字典時，既沒有鴻學之士的協助，也沒有慷慨的贊助人；寫作時不是在安靜的隱居小屋，也不是在宏偉的學術殿堂中，而是在生活的勞苦、雜物、病痛與苦難當中。
+󠀠
+即便我的努力沒有展現英文語言的全貌，我仍知道，我是在嘗試一件人類從未做過的成就中失敗了。光是這點就足以壓過任何試圖批評我的聲音。
+󠀠
+假若在後續的年代中，字典中所有的不確定性皆被解決，我的考證皆是正確的，那麼我就心滿意足了，也無需任何外界的讚美。就算真的獲得了讚美，在我這幽暗的孤獨小室中，又有任何幫助？
+󠀠
+這份字典早已拖延太久，我想取悅的那些人們早已入土為安，成功與失敗，僅僅是空谷回音：因此緣故，我心中是一片清冷的平靜，不再期望或害怕，任何讚美或譴責。」（paraphrasing）
+󠀠
+
+▋ example #2
+
+用現代的眼光來看，Johnson 是一個「窮困潦倒的流量之王」，擁有極大的名氣，且由英王直接贊助他的生活費，來自國家元首的被動收入。
+󠀠
+但除了這筆生活費以外，他始終沒有真正將名氣轉化成錢。
+󠀠
+也就是說，他始終沒有做到「流量變現」。
+󠀠
+從他的名氣以及交友圈來看，他完全有辦法變成富人階級。
+󠀠
+但他似乎選擇不這麼做，而是將所有時間 all in 在博覽群書上。（以及，因為欠債被關等待救援）
+󠀠
+也許，這就是他做出的權衡：用財富與舒適，換來海量的知識，造就英國文學的一代里程碑。
+
+▋ example #3
+
+沒有特定的歌推薦，但意外變成我聽最久的曲風。
+󠀠󠀠
+西班牙文的音韻、墨西哥獨特的荒野剽悍感，融合嘻哈的 beats 做成饒舌，節奏感非常強，文字的力道也非常強（雖然全部聽不懂）。
+󠀠󠀠󠀠
+可以和這個曲風媲美的，可能就是法文饒舌了。總覺得 Rap 編曲上，本身節奏感就很強烈的語言還是比較吃香，很容易有好作品。
+
+▋ example #4
+
+流量的意義，大概有三個層面。
+󠀠
+一，從行銷面看，流量是一個「商業工具」。
+󠀠
+對創業者來說，「內容」是一個放大倍率非常高的槓桿，但前提是你有一套變現的機器。
+󠀠
+Johnson 的故事就是經典案例：單純的流量會讓你很有名，且身邊都是「貴族」，但並不會自動讓你變富有。（就算總統賞識你的文章，頂多也只是說聲讚）
+󠀠
+二、從創作面看，流量是一個「回饋工具」。
+󠀠
+網路寫作很像是一種「數據挖礦」（data-mining），用一篇一篇的文章去做測試與摸索，看出哪種選題、架構、Hook、金句會「中」。
+󠀠
+學習使用數據去改善內容的創作者，會比其他「盲飛」的人進步快上 10x。
+󠀠
+三、從情感面看，流量是一個「認同工具」
+󠀠
+流量也直接餵養我們內心深處的需求：「認同我」。每一個按讚、分享、留言，都是一個人類在螢幕另一邊認同你。
+󠀠
+這很容易走心。當我剛開始寫出爆文時，每天多巴胺的分泌像是在衝浪一樣，隨著每一篇文章的紅與不紅而起落。
+󠀠
+我發現流量確實是可以控制的，確實有一種東西叫做「流量密碼」。
+󠀠
+但要掌握這個技術最困難的地方，不是寫作，而是心性。
+󠀠
+刻意要寫爆文時，我的內心和思考，幾乎都被流量牽著走。
+󠀠
+漸漸地，我的快樂被數字控制。我像是虛擬貨幣操盤手一樣，整天刷新社群，死盯著流量的數字，盤算著怎樣可以把這些數字變成錢。
+󠀠
+直到有一天我發現，這不是我想要的人生。因此停更兩週的過程中，除了檢視我與日更的關係，也是在檢視自己與流量的關係。
+󠀠
+於是我發現，我真正在檢視的，其實是內心對「認同感」的需求。
+󠀠
+「流量」作為「認同工具」，很容易凌駕於「商業工具」、「回饋工具」的其他功能，成為填補內心缺乏的手段。
+󠀠
+這也許在團體戰的情況下有人監督還好，但對於一人公司，個人創作者來說，「對流量上癮」會是一個嚴重的問題。
+󠀠
+因為，「流量」其實是很容易上手的。那些選題、結構、前言、開場都有既定形式，會寫文字，就能寫出某種程度的爆文，只是成功率多高的問題。
+󠀠
+但要真的專精「流量的技術」，真正的阻礙是內心對認同的需求。只有當我們不再需要他者的認同（被討厭的勇氣），鑽研流量這門譁眾取寵的技術才是安全的事。
+󠀠
+（同理，只有當喜劇演員不再需要笑聲時，才能專精給予笑聲的技術。）
+󠀠</pre>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                        <h3>補充資源</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        
+        // PWA 安裝提示
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the A2HS prompt');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installPrompt').classList.remove('show');
+                });
+            }
+        });
+
+        // 切換區塊顯示/隱藏（優化動畫避免跑版）
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('active')) {
+                // 收起動畫
+                const height = content.scrollHeight;
+                content.style.maxHeight = height + 'px';
+                
+                requestAnimationFrame(() => {
+                    content.style.maxHeight = '0';
+                    content.classList.remove('active');
+                    header.classList.remove('active');
+                });
+            } else {
+                // 展開動畫
+                content.classList.add('active');
+                header.classList.add('active');
+                
+                const height = content.scrollHeight;
+                content.style.maxHeight = '0';
+                
+                requestAnimationFrame(() => {
+                    content.style.maxHeight = height + 'px';
+                    
+                    // 動畫完成後移除固定高度
+                    setTimeout(() => {
+                        if (content.classList.contains('active')) {
+                            content.style.maxHeight = 'none';
+                        }
+                    }, 300);
+                });
+            }
+        }
+
+        // 複製到剪貼簿
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showCopyFeedback(button);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    fallbackCopy(code, button);
+                });
+            } else {
+                fallbackCopy(code, button);
+            }
+        }
+
+        // 備用複製方法（適用於較舊的瀏覽器）
+        function fallbackCopy(text, button) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.top = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopyFeedback(button);
+            } catch (err) {
+                console.error('Fallback copy failed: ', err);
+                alert('複製失敗，請手動選取文字複製');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // 顯示複製成功回饋
+        function showCopyFeedback(button) {
+            const originalText = button.textContent;
+            button.textContent = '已複製！';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }
+
+        // 防抖動函數
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 優化的搜尋功能
+        function performSearch(searchTerm) {
+            const sections = document.querySelectorAll('.section');
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            
+            sections.forEach(section => {
+                const content = section.textContent.toLowerCase();
+                const header = section.querySelector('.section-header');
+                const sectionContent = section.querySelector('.section-content');
+                
+                const shouldShow = content.includes(lowerSearchTerm) || lowerSearchTerm === '';
+                
+                // 使用 display 來控制顯示/隱藏，避免 position 造成的跑版
+                section.style.display = shouldShow ? 'block' : 'none';
+                
+                if (shouldShow && lowerSearchTerm !== '') {
+                    // 搜尋時自動展開匹配的區塊
+                    sectionContent.classList.add('active');
+                    header.classList.add('active');
+                }
+            });
+        }
+
+        // 使用防抖動的搜尋（減少延遲提升響應性）
+        const debouncedSearch = debounce((e) => {
+            performSearch(e.target.value);
+        }, 200);
+
+        // 搜尋功能
+        document.getElementById('searchInput').addEventListener('input', debouncedSearch);
+
+        // 主題切換功能
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // 更新圖標
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'light' ? '◐' : '◑';
+            
+            // 保存主題設定
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 優化的主題載入（強制使用白色背景）
+        (function() {
+            // 強制使用 light 模式確保白色背景
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        })();
+
+        // 載入已保存的主題設定
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'light' ? '◐' : '◑';
+            }
+        }
+
+        // 在頁面載入時應用主題圖標
+        document.addEventListener('DOMContentLoaded', loadTheme);
+
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
