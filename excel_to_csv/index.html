@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>票券資訊轉換器</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>票券資訊轉換器</h2>
+        <p class="description">將 Excel 檔案轉換為 CSV 格式的票券資訊</p>
+        
+        <div id="dropZone" class="drop-zone">
+            <div class="drop-zone-content">
+                <img src="upload-icon.svg" alt="上傳" class="upload-icon">
+                <p>拖放檔案到這裡或</p>
+                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                <button class="select-file-btn" onclick="document.getElementById('fileInput').click()">選擇檔案</button>
+            </div>
+        </div>
+
+        <div id="fileList" class="file-list" style="display: none;">
+            <h3>已選擇的檔案</h3>
+            <div id="fileListContent"></div>
+        </div>
+
+        <div class="buttons">
+            <button id="convertBtn" class="convert-btn" disabled>轉換</button>
+        </div>
+
+        <div id="progressContainer" class="progress-container" style="display: none;">
+            <div class="progress-bar">
+                <div id="progress" class="progress"></div>
+            </div>
+            <div id="progressText" class="progress-text">0%</div>
+        </div>
+
+        <div id="result" class="result" style="display: none;">
+            <h3 id="resultMessage"></h3>
+            <div id="downloadLinks"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
